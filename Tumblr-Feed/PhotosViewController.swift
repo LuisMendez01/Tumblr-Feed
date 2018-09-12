@@ -21,14 +21,38 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
     
     // 1.          2.             3.
     var posts: [[String: Any]] = []
+    var refreshControl: UIRefreshControl!//! means better not be null or else crashes
     
+    
+    /*******************************************
+     * UIVIEW CONTROLLER LIFECYCLES FUNCTIONS *
+     *******************************************/
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         tableView.delegate = self
         tableView.dataSource = self
         
-        tableView.rowHeight = 200
+        tableView.rowHeight = 250
+        
+        refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(didPullToRefresh(_:)), for: .valueChanged)
+        
+        tableView.insertSubview(refreshControl, at: 0)//0 means it will show on the top
+        
+        self.fetchPhotos()//get now playing movies from the APIs
+
+    }
+
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+    
+    /************************
+     * MY CREATED FUNCTIONS *
+     ************************/
+    func fetchPhotos() {
         
         // Network request snippet
         let url = URL(string: "https://api.tumblr.com/v2/blog/humansofnewyork.tumblr.com/posts/photo?api_key=Q6vHoaVm5L1u2ZAW1fqv3Jw48gFzYVg9P0vH0VHl3GVy6quoGV")!
@@ -50,16 +74,24 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
                 
                 //reload table once we get all our info in the JSON
                 self.tableView.reloadData()
+                
+                self.refreshControl.endRefreshing()//stop refresh when data has been acquired
             }
         }
-        task.resume()
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+            task.resume()
     }
     
+    @objc func didPullToRefresh(_ refreshControl: UIRefreshControl){
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) { // change 2 to desired number of seconds
+            // Your code with delay
+            self.fetchPhotos()//get now playing movies from the APIs
+        }
+    }
+    
+    /***********************
+     * TableView functions *
+     ***********************/
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return posts.count
     }
