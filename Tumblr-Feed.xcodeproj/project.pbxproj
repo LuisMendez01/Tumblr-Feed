@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		05F3ADB72149A4BE00CC8BD6 /* PhotoViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F3ADB62149A4BE00CC8BD6 /* PhotoViewCell.swift */; };
 		315E28CB777A0A3950D44D36 /* Pods_Tumblr_Feed.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 76D9C9323FD82856092A5C67 /* Pods_Tumblr_Feed.framework */; };
 		F76BC21F2148B182004F70B3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F76BC21E2148B182004F70B3 /* AppDelegate.swift */; };
 		F76BC2242148B182004F70B3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F76BC2222148B182004F70B3 /* Main.storyboard */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		05F3ADB62149A4BE00CC8BD6 /* PhotoViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoViewCell.swift; sourceTree = "<group>"; };
 		48E5D62B77F0F927D6B444EE /* Pods-Tumblr-Feed.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tumblr-Feed.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Tumblr-Feed/Pods-Tumblr-Feed.debug.xcconfig"; sourceTree = "<group>"; };
 		76D9C9323FD82856092A5C67 /* Pods_Tumblr_Feed.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Tumblr_Feed.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		929CA43A2309FE7457866A60 /* Pods-Tumblr-Feed.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tumblr-Feed.release.xcconfig"; path = "Pods/Target Support Files/Pods-Tumblr-Feed/Pods-Tumblr-Feed.release.xcconfig"; sourceTree = "<group>"; };
@@ -71,6 +73,7 @@
 			isa = PBXGroup;
 			children = (
 				F76BC21E2148B182004F70B3 /* AppDelegate.swift */,
+				05F3ADB62149A4BE00CC8BD6 /* PhotoViewCell.swift */,
 				F76BC2302148B769004F70B3 /* PhotosViewController.swift */,
 				F76BC2222148B182004F70B3 /* Main.storyboard */,
 				F76BC2252148B189004F70B3 /* Assets.xcassets */,
@@ -204,6 +207,7 @@
 			files = (
 				F76BC21F2148B182004F70B3 /* AppDelegate.swift in Sources */,
 				F76BC2312148B769004F70B3 /* PhotosViewController.swift in Sources */,
+				05F3ADB72149A4BE00CC8BD6 /* PhotoViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
