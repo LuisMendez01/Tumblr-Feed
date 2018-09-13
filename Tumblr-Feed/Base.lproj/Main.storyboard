@@ -29,17 +29,20 @@
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="249.66666666666666"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Tumblr" translatesAutoresizingMaskIntoConstraints="NO" id="FDH-Zg-h5P">
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="FDH-Zg-h5P">
                                                     <rect key="frame" x="0.0" y="0.0" width="375" height="250"/>
+                                                    <color key="backgroundColor" red="0.55634254220000001" green="0.97934550050000002" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="height" constant="250" id="Ta4-kv-Fw9"/>
+                                                        <constraint firstAttribute="width" constant="375" id="KqE-Pf-qMr"/>
+                                                        <constraint firstAttribute="height" constant="250" id="umT-j2-YgS"/>
                                                     </constraints>
                                                 </imageView>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="FDH-Zg-h5P" firstAttribute="leading" secondItem="EcN-RU-EHO" secondAttribute="leading" id="iEN-GZ-bNN"/>
-                                                <constraint firstItem="FDH-Zg-h5P" firstAttribute="top" secondItem="EcN-RU-EHO" secondAttribute="top" id="uOa-H1-vD9"/>
-                                                <constraint firstAttribute="trailing" secondItem="FDH-Zg-h5P" secondAttribute="trailing" id="zkU-Ew-AHT"/>
+                                                <constraint firstAttribute="trailing" secondItem="FDH-Zg-h5P" secondAttribute="trailing" id="4ad-n9-2mY"/>
+                                                <constraint firstItem="FDH-Zg-h5P" firstAttribute="top" secondItem="EcN-RU-EHO" secondAttribute="top" id="aqM-5R-vMC"/>
+                                                <constraint firstAttribute="bottom" secondItem="FDH-Zg-h5P" secondAttribute="bottom" id="fae-vN-YxA"/>
+                                                <constraint firstItem="FDH-Zg-h5P" firstAttribute="leading" secondItem="EcN-RU-EHO" secondAttribute="leading" id="zEo-cd-0F8"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
@@ -48,9 +51,16 @@
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="MjL-Jk-rIk">
+                                <rect key="frame" x="169" y="388" width="37" height="37"/>
+                                <color key="backgroundColor" red="0.37055522200000002" green="0.37056469920000001" blue="0.37055957319999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="color" red="1" green="0.57810515169999999" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" red="0.61568627450980395" green="0.67450980392156867" blue="0.74901960784313726" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="MjL-Jk-rIk" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="Dem-o2-JJP"/>
+                            <constraint firstItem="MjL-Jk-rIk" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Gow-c8-JUV"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="t8t-65-Sxf" secondAttribute="trailing" id="YUv-xA-vre"/>
                             <constraint firstItem="t8t-65-Sxf" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="dCy-of-TtZ"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="t8t-65-Sxf" secondAttribute="bottom" id="jzK-dO-Lwb"/>
@@ -59,6 +69,7 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
+                        <outlet property="activityIndicator" destination="MjL-Jk-rIk" id="mto-Sd-RcL"/>
                         <outlet property="tableView" destination="t8t-65-Sxf" id="JWm-bR-Sym"/>
                     </connections>
                 </viewController>
@@ -67,7 +78,4 @@
             <point key="canvasLocation" x="32.799999999999997" y="36.945812807881772"/>
         </scene>
     </scenes>
-    <resources>
-        <image name="Tumblr" width="480" height="246"/>
-    </resources>
 </document>
