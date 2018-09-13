@@ -105,18 +105,19 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
         let TryAgainAction = UIAlertAction(title: "Try Again", style: .default) { (action) in
             // handle response here.
             alertController.dismiss(animated: true, completion: nil)
+            self.activityIndicator.startAnimating()//start the indicator before reloading data
             self.fetchPhotos()//get now playing movies from the APIs
         }
         // add the Try Again action to the alert controller
         alertController.addAction(TryAgainAction)
         
         self.present(alertController, animated: true, completion: nil)
-        
         /*
          self.present(alertController, animated: true) {
          // optional code for what happens after the alert controller has finished presenting
+            
          }
-         */
+        */
     }
     
     /***********************
