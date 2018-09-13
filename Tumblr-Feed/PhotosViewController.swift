@@ -22,7 +22,7 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
     // 1.          2.             3.
     var posts: [[String: Any]] = []
     var refreshControl: UIRefreshControl!//! means better not be null or else crashes
-    
+
     
     /*******************************************
      * UIVIEW CONTROLLER LIFECYCLES FUNCTIONS *
@@ -60,7 +60,13 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
         session.configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
         let task = session.dataTask(with: url) { (data, response, error) in
             if let error = error {
+                
                 print(error.localizedDescription)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) { // change 2 to desired number of seconds
+                    // Your code with delay
+                    self.offLineAlert()//show alert
+                }
+                
             } else if let data = data,
                 let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
                 print(dataDictionary)
@@ -89,6 +95,27 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
         }
     }
     
+    func offLineAlert() {
+        
+        let alertController = UIAlertController(title: "Can't Fetch Photos", message: "Internet connection appears to be offline", preferredStyle: .alert)
+        
+        // create an TryAgainAction action
+        let TryAgainAction = UIAlertAction(title: "Try Again", style: .default) { (action) in
+            // handle response here.
+            alertController.dismiss(animated: true, completion: nil)
+            self.fetchPhotos()//get now playing movies from the APIs
+        }
+        // add the Try Again action to the alert controller
+        alertController.addAction(TryAgainAction)
+        
+        self.present(alertController, animated: true, completion: nil)
+        /*
+         self.present(alertController, animated: true) {
+         // optional code for what happens after the alert controller has finished presenting
+         }
+         */
+    }
+    
     /***********************
      * TableView functions *
      ***********************/
@@ -100,6 +127,11 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
         
         // Configure YourCustomCell using the outlets that you've defined.
         let cell = tableView.dequeueReusableCell(withIdentifier: "photoCell") as! PhotoViewCell
+        
+        // Use a Dark blue color when the user selects the cell
+        let backgroundView = UIView()
+        backgroundView.backgroundColor = #colorLiteral(red: 0.4699950814, green: 0.6678406, blue: 0.8381099105, alpha: 1)
+        cell.selectedBackgroundView = backgroundView
         
         let post = posts[indexPath.row]
         
@@ -123,7 +155,22 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
             // 4. Create a URL using the urlString
             let url = URL(string: urlString)
             
-            cell.photoImageView.af_setImage(withURL: url!)
+            //let placeholderImage = UIImage(named: "Tumblr.jpg")
+            /*
+            UIImageView.af_sharedImageDownloader = ImageDownloader(
+                configuration: ImageDownloader.defaultURLSessionConfiguration(),
+                downloadPrioritization: .fifo,
+                maximumActiveDownloads: 10,
+                imageCache:imageCache
+            )
+            */
+            cell.photoImageView.af_setImage(
+                withURL: url!,
+                //placeholderImage: placeholderImage,
+                imageTransition: .crossDissolve(1.5),
+                runImageTransitionIfCached: false,
+                completion: (nil)
+            )
         }
         
         return cell

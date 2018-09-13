@@ -29,7 +29,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="249.66666666666666"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="FDH-Zg-h5P">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Tumblr" translatesAutoresizingMaskIntoConstraints="NO" id="FDH-Zg-h5P">
                                                     <rect key="frame" x="0.0" y="0.0" width="375" height="250"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="250" id="Ta4-kv-Fw9"/>
@@ -67,4 +67,7 @@
             <point key="canvasLocation" x="32.799999999999997" y="36.945812807881772"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="Tumblr" width="480" height="246"/>
+    </resources>
 </document>
