@@ -51,75 +51,6 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
         // Dispose of any resources that can be recreated.
     }
     
-    /************************
-     * MY CREATED FUNCTIONS *
-     ************************/
-    func fetchPhotos() {
-        
-        // Network request snippet
-        let url = URL(string: "https://api.tumblr.com/v2/blog/humansofnewyork.tumblr.com/posts/photo?api_key=Q6vHoaVm5L1u2ZAW1fqv3Jw48gFzYVg9P0vH0VHl3GVy6quoGV")!
-        let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
-        session.configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
-        let task = session.dataTask(with: url) { (data, response, error) in
-            if let error = error {
-                
-                print(error.localizedDescription)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) { // change 2 to desired number of seconds
-                    // Your code with delay
-                    self.offLineAlert()//show alert
-                }
-                
-            } else if let data = data,
-                let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                print(dataDictionary)
-                
-                // TODO: Get the posts and store in posts property
-                // Get the dictionary from the response key
-                let responseDictionary = dataDictionary["response"] as! [String: Any]
-                // Store the returned array of dictionaries in our posts property
-                self.posts = responseDictionary["posts"] as! [[String: Any]]
-                // TODO: Reload the table view
-                
-                //reload table once we get all our info in the JSON
-                self.tableView.reloadData()
-                self.activityIndicator.stopAnimating()//stop indicator coz data is acquired
-                self.refreshControl.endRefreshing()//stop refresh when data has been acquired
-            }
-        }
-            task.resume()
-    }
-    
-    @objc func didPullToRefresh(_ refreshControl: UIRefreshControl){
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) { // change 2 to desired number of seconds
-            // Your code with delay
-            self.fetchPhotos()//get now playing movies from the APIs
-        }
-    }
-    
-    func offLineAlert() {
-        
-        let alertController = UIAlertController(title: "Can't Fetch Photos", message: "Internet connection appears to be offline", preferredStyle: .alert)
-        
-        // create an TryAgainAction action
-        let TryAgainAction = UIAlertAction(title: "Try Again", style: .default) { (action) in
-            // handle response here.
-            alertController.dismiss(animated: true, completion: nil)
-            self.activityIndicator.startAnimating()//start the indicator before reloading data
-            self.fetchPhotos()//get now playing movies from the APIs
-        }
-        // add the Try Again action to the alert controller
-        alertController.addAction(TryAgainAction)
-        
-        self.present(alertController, animated: true, completion: nil)
-        /*
-         self.present(alertController, animated: true) {
-         // optional code for what happens after the alert controller has finished presenting
-            
-         }
-        */
-    }
-    
     /***********************
      * TableView functions *
      ***********************/
@@ -160,7 +91,7 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
             let url = URL(string: urlString)
             
             let placeholderImage = UIImage(named: "house2.png")
- 
+            
             cell.photoImageView.af_setImage(
                 withURL: url!,
                 placeholderImage: placeholderImage,
@@ -172,5 +103,143 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
         
         return cell
     }
-
+    
+    /*******************
+     * @OBJC FUNCTIONS *
+     *******************/
+    @objc func didPullToRefresh(_ refreshControl: UIRefreshControl){
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) { // change 2 to desired number of seconds
+            // Your code with delay
+            self.fetchPhotos()//get now playing movies from the APIs
+        }
+    }
+    
+    /************************
+     * MY CREATED FUNCTIONS *
+     ************************/
+    func fetchPhotos() {
+        
+        // Network request snippet
+        let url = URL(string: "https://api.tumblr.com/v2/blog/humansofnewyork.tumblr.com/posts/photo?api_key=Q6vHoaVm5L1u2ZAW1fqv3Jw48gFzYVg9P0vH0VHl3GVy6quoGV")!
+        let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
+        session.configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
+        let task = session.dataTask(with: url) { (data, response, error) in
+            if let error = error {
+                
+                print(error.localizedDescription)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) { // change 2 to desired number of seconds
+                    // Your code with delay
+                    self.offLineAlert()//show alert
+                }
+                
+            } else if let data = data,
+                let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                print(dataDictionary)
+                
+                // TODO: Get the posts and store in posts property
+                // Get the dictionary from the response key
+                let responseDictionary = dataDictionary["response"] as! [String: Any]
+                // Store the returned array of dictionaries in our posts property
+                self.posts = responseDictionary["posts"] as! [[String: Any]]
+                // TODO: Reload the table view
+                
+                //reload table once we get all our info in the JSON
+                self.tableView.reloadData()
+                self.activityIndicator.stopAnimating()//stop indicator coz data is acquired
+                self.refreshControl.endRefreshing()//stop refresh when data has been acquired
+            }
+        }
+            task.resume()
+    }
+    
+    func offLineAlert() {
+        
+        let alertController = UIAlertController(title: "Can't Fetch Photos", message: "Internet connection appears to be offline", preferredStyle: .alert)
+        
+        // create an TryAgainAction action
+        let TryAgainAction = UIAlertAction(title: "Try Again", style: .default) { (action) in
+            // handle response here.
+            alertController.dismiss(animated: true, completion: nil)
+            self.activityIndicator.startAnimating()//start the indicator before reloading data
+            self.fetchPhotos()//get now playing movies from the APIs
+        }
+        // add the Try Again action to the alert controller
+        alertController.addAction(TryAgainAction)
+        
+        self.present(alertController, animated: true, completion: nil)
+        /*
+         self.present(alertController, animated: true) {
+         // optional code for what happens after the alert controller has finished presenting
+            
+         }
+        */
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        if let indexPath = tableView.indexPathForSelectedRow{
+            
+            let selectedRow = indexPath.row
+            let destinationVC = segue.destination as UIViewController
+            
+            //can have diff segues say for btn1 and for btn2, but
+            //since I'm using table then even and row cells are used here
+            if segue.identifier == "otherSegue" || selectedRow%2 == 0 {
+                destinationVC.title = "Red"
+                destinationVC.view.backgroundColor = UIColor.red
+            } else if segue.identifier == "showPhotoSegue" && selectedRow%2 == 1 {
+                destinationVC.title = "Blue"
+                destinationVC.view.backgroundColor = UIColor.blue
+            }
+        }
+       
+    }
 }
+
+//This goes in appDelegate to create a VC and add NavController
+/*
+ @UIApplicationMain
+ class AppDelegate: UIResponder, UIApplicationDelegate {
+ var window: UIWindow?
+ 
+ func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+ 
+ //Step 1: Instantiate the root view controller for the navigation controller
+ let storyboard = UIStoryboard(name: "Main", bundle: nil)
+ let pickColorVC = storyboard.instantiateViewController(withIdentifier: "PickAColor") as UIViewController
+ 
+ Step 2: Create navigation controller with root view controller
+ let navigationController = UINavigationController(rootViewController: pickColorVC)
+ 
+ window = UIWindow(frame: UIScreen.main.bounds)
+ if let window = window {
+ window.rootViewController = navigationController
+ window.makeKeyAndVisible()
+ }
+ return true
+ }
+ ...
+ }
+ */
+
+//Step 3: Respond to events by pushing new view controllers
+/*
+ class ColorPickerViewController: UIViewController {
+ 
+ @IBAction func didTapRedButton(sender: Any) {
+ pushViewController(title: "Red", color: UIColor.red)
+ }
+ 
+ @IBAction func didTapBlueButton(sender: Any) {
+ pushViewController(title: "Blue", color: UIColor.blue)
+ }
+ 
+ private func pushViewController(title: String, color: UIColor) {
+ let vc = UIViewController()
+ vc.view.backgroundColor = color
+ vc.title = title
+ self.navigationController?.pushViewController(vc, animated: true)
+ }
+ }
+ */
