@@ -12,6 +12,7 @@ import AlamofireImage
 class PhotosViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     //1.This property will store the data returned from the network request. It's convention to create properties near the top of the view controller class where we create our outlets.
     
@@ -22,7 +23,6 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
     // 1.          2.             3.
     var posts: [[String: Any]] = []
     var refreshControl: UIRefreshControl!//! means better not be null or else crashes
-    
     
     /*******************************************
      * UIVIEW CONTROLLER LIFECYCLES FUNCTIONS *
@@ -39,6 +39,8 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
         refreshControl.addTarget(self, action: #selector(didPullToRefresh(_:)), for: .valueChanged)
         
         tableView.insertSubview(refreshControl, at: 0)//0 means it will show on the top
+        
+        self.activityIndicator.startAnimating()//start the indicator before reloading data
         
         self.fetchPhotos()//get now playing movies from the APIs
 
@@ -60,7 +62,13 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
         session.configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
         let task = session.dataTask(with: url) { (data, response, error) in
             if let error = error {
+                
                 print(error.localizedDescription)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) { // change 2 to desired number of seconds
+                    // Your code with delay
+                    self.offLineAlert()//show alert
+                }
+                
             } else if let data = data,
                 let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
                 print(dataDictionary)
@@ -74,7 +82,7 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
                 
                 //reload table once we get all our info in the JSON
                 self.tableView.reloadData()
-                
+                self.activityIndicator.stopAnimating()//stop indicator coz data is acquired
                 self.refreshControl.endRefreshing()//stop refresh when data has been acquired
             }
         }
@@ -82,11 +90,34 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     @objc func didPullToRefresh(_ refreshControl: UIRefreshControl){
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) { // change 2 to desired number of seconds
             // Your code with delay
             self.fetchPhotos()//get now playing movies from the APIs
         }
+    }
+    
+    func offLineAlert() {
+        
+        let alertController = UIAlertController(title: "Can't Fetch Photos", message: "Internet connection appears to be offline", preferredStyle: .alert)
+        
+        // create an TryAgainAction action
+        let TryAgainAction = UIAlertAction(title: "Try Again", style: .default) { (action) in
+            // handle response here.
+            alertController.dismiss(animated: true, completion: nil)
+            self.activityIndicator.startAnimating()//start the indicator before reloading data
+            self.fetchPhotos()//get now playing movies from the APIs
+        }
+        // add the Try Again action to the alert controller
+        alertController.addAction(TryAgainAction)
+        
+        self.present(alertController, animated: true, completion: nil)
+        /*
+         self.present(alertController, animated: true) {
+         // optional code for what happens after the alert controller has finished presenting
+            
+         }
+        */
     }
     
     /***********************
@@ -100,6 +131,11 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
         
         // Configure YourCustomCell using the outlets that you've defined.
         let cell = tableView.dequeueReusableCell(withIdentifier: "photoCell") as! PhotoViewCell
+        
+        // Use a Dark blue color when the user selects the cell
+        let backgroundView = UIView()
+        backgroundView.backgroundColor = #colorLiteral(red: 0.4699950814, green: 0.6678406, blue: 0.8381099105, alpha: 1)
+        cell.selectedBackgroundView = backgroundView
         
         let post = posts[indexPath.row]
         
@@ -123,7 +159,15 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
             // 4. Create a URL using the urlString
             let url = URL(string: urlString)
             
-            cell.photoImageView.af_setImage(withURL: url!)
+            let placeholderImage = UIImage(named: "house2.png")
+ 
+            cell.photoImageView.af_setImage(
+                withURL: url!,
+                placeholderImage: placeholderImage,
+                imageTransition: .crossDissolve(2),
+                runImageTransitionIfCached: false,
+                completion: (nil)
+            )
         }
         
         return cell
