@@ -58,3 +58,65 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+
+# Lab 2 - *Tumblr-Feed*
+
+**Tumblr-Feed** is a photo browsing app app using the [The Tumblr API](https://www.tumblr.com/docs/en/api/v2#posts).
+
+Time spent: **10** hours spent in total
+
+## User Stories
+
+The following **required** user stories are complete:
+
+- [x] User can tab an image to view a larger image in a detail view (5pts)
+
+The following **stretch** user stories are implemented:
+
+- [x] Add Avatar and Publish Dates (+2pt)
+- [x] Zoomable Photo View (+2pt)
+- [x] Infinite Scrolling (+2pt)
+
+The following **additional** user stories are implemented:
+
+- [x] List anything else that you can get done to improve the app functionality! (+1-3pts)
+    - We can add more details in the detail View and not only the image
+    - We can a request of only 10 posts and with the infinite scrolling we can get 10 more and so on.
+    - Constraints specially on the scrolling view, it seems to be confusing when I apply them.
+
+Please list two areas of the assignment you'd like to **discuss further with your peers** during the next class (examples include better ways to implement something, how to extend your app in certain ways, etc):
+
+1. I want to discuss how to make the infinite scrolling more efficient and how to apply good constraints to it.
+2. I also want to discuss how methods and attributes of the infinite scrolling work to know how to set it to my preference.
+
+## Video Walkthrough
+
+Here's a walkthrough of implemented user stories:
+
+<div style="display: inline-block;">
+<img float="left" width="250" height="500" src='https://user-images.githubusercontent.com/16315708/45463509-69dcbd80-b6da-11e8-9149-33cc81ea1b14.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<div/>
+GIF created with [LiceCap](http://www.cockos.com/licecap/).
+
+## Notes
+
+Describe any challenges encountered while building the app.
+    - I couldn't zoom in or out on the pictures not because the code was wrong but I just didn't know I had to hold alt + click and then drag. I was having a hard time there.
+    - I was confused on the infinite scrolling I could not see the activity indicator being applied. I also saw some bouncing when I reached the end of the table, not sure why it did that. 
+
+## License
+
+    Copyright [2018] [Luis Mendez]
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
