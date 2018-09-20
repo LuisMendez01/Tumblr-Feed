@@ -116,7 +116,7 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
                 withURL: url!,
                 placeholderImage: placeholderImage,
                 imageTransition: .crossDissolve(2),
-                runImageTransitionIfCached: false,
+                runImageTransitionIfCached: true,
                 completion: (nil)
             )
             
@@ -291,7 +291,8 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
         //This is another way to get the indexPath!
         //let cell = sender as! UITableViewCell
         //let indexPath = tableView.indexPath(for: cell)!
-        
+        //check for row clicked on
+       
         if let indexPath = tableView.indexPathForSelectedRow{
             
             let selectedRow = indexPath.section
@@ -301,10 +302,10 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
             //since I'm using table then even and row cells are used here
             if segue.identifier == "otherSegue" || selectedRow%2 == 0 {
                 destinationVC.title = "Red"
-                destinationVC.view.backgroundColor = UIColor.red
+                destinationVC.view.backgroundColor = #colorLiteral(red: 0.1960784346, green: 0.3411764801, blue: 0.1019607857, alpha: 1)
             } else if segue.identifier == "showPhotoSegue" && selectedRow%2 == 1 {
                 destinationVC.title = "Blue"
-                destinationVC.view.backgroundColor = UIColor.blue
+                destinationVC.view.backgroundColor = #colorLiteral(red: 0.1019607857, green: 0.2784313858, blue: 0.400000006, alpha: 1)
             }
             
             let post = posts[selectedRow]
@@ -323,7 +324,6 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
                 destinationVC.url = url!
             }
         }
-       
     }
 }
 
