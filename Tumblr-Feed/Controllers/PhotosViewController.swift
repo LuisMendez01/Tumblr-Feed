@@ -147,16 +147,31 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
         headerView.addSubview(profileView)
         
         let post = posts[section]
-        let date = post["date"] as? String
+        let stringDate = post["date"] as? String
+        
+        let dateFormatter = DateFormatter()//dateFormat has to look same as string data coming in
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss zzz"//data extracted looks like this -> 2018-09-03 22:49:17 GMT
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+        dateFormatter.timeZone = TimeZone(abbreviation: "GMT+0:00") //Current time zone
+        dateFormatter.isLenient = true
+        //print(type(of: stringDate))
+        
+        let date = dateFormatter.date(from: stringDate!)
+        //print(date!)
+        
+        //this will make date coming like this 2018-09-03 22:49:17 GMT turn like this //MMM d, yyyy, HH:mm a
+        dateFormatter.dateStyle = .medium
+        dateFormatter.timeStyle = .short
         
         // Add a UILabel for the date here
         // Use the section number to get the right URL
         // let label = ...
-        let labelDate = UILabel(frame: CGRect(x: 55, y: 10, width: 200, height: 30))
-        labelDate.textAlignment = .left
-        labelDate.text = date
-        headerView.addSubview(labelDate)
-     
+        let labelDate = UILabel(frame: CGRect(x: 55, y: 10, width: 250, height: 30))
+            labelDate.textAlignment = .left
+            labelDate.text = dateFormatter.string(from: date ?? Date())
+        
+            headerView.addSubview(labelDate)
+        
         return headerView
     }
     
@@ -183,18 +198,23 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
         // Handle scroll behavior here
         if (!isMoreDataLoading) {
             // Calculate the position of one screen length before the bottom of the results
-            let scrollViewContentHeight = tableView.contentSize.height
-            let scrollOffsetThreshold = scrollViewContentHeight - tableView.bounds.size.height
-            print("scrollViewContentHeight: \(scrollViewContentHeight) vs scrollOffsetThreshold \(scrollOffsetThreshold ) vs tableView.bounds.size.height: \(tableView.bounds.size.height)")
+            let scrollViewContentHeight = tableView.contentSize.height//size of content on table
+            let phoneFrame = tableView.frame.height//height for phone screen
+            let scrollOffsetThreshold = scrollViewContentHeight - phoneFrame//when reached end of table to start requesting more data
             
             // When the user has scrolled past the threshold, start requesting
-            if(scrollView.contentOffset.y > scrollOffsetThreshold && tableView.isDragging) {
+            if(scrollView.contentOffset.y > scrollOffsetThreshold && tableView.isTracking) {
+                
+                print("beginBatchFetch")
                 
                 isMoreDataLoading = true
                 
                 // Update position of loadingMoreView, and start loading indicator
+                //width same as table width, height same as default indicator
+                //position x start from the very most left and y start right after the table end
                 let frame = CGRect(x: 0, y: tableView.contentSize.height, width: tableView.bounds.size.width, height: InfiniteScrollActivityView.defaultHeight)
-                loadingMoreView?.frame = frame
+                
+                loadingMoreView?.frame = frame//this is how big indicator will be and positioned
                 loadingMoreView!.startAnimating()
                 
                 // Code to load more results
@@ -251,13 +271,16 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
                 // Update flag in scrollViewDidScroll that data has been requested
                 self.isMoreDataLoading = false
                 
-                // Stop the loading indicator
-                self.loadingMoreView!.stopAnimating()
-                
                 // ... Use the new data to update the data source ...
+                //applied lateness to see the transition of indicator and reload data
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) { // change 2 to desired number of seconds
                 
-                // Reload the tableView now that there is new data
-                self.tableView.reloadData()
+                    // Stop the loading indicator
+                    self.loadingMoreView!.stopAnimating()
+                    
+                    // Reload the tableView now that there is new data
+                    self.tableView.reloadData()
+                }
             }
         }
             task.resume()

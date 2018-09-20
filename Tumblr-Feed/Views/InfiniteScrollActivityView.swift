@@ -30,6 +30,7 @@ class InfiniteScrollActivityView: UIView {
     
     func setupActivityIndicator() {
         activityIndicatorView.activityIndicatorViewStyle = .gray
+        activityIndicatorView.color = .black
         activityIndicatorView.hidesWhenStopped = true
         self.addSubview(activityIndicatorView)
     }
