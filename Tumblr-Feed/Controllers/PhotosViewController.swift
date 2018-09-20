@@ -26,6 +26,10 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
     
     var checked: [Bool]!//for checkmark on row clicked
     
+    var isMoreDataLoading = false//to make sure data has already been loaded
+    
+    var loadingMoreView:InfiniteScrollActivityView?
+    
     /*******************************************
      * UIVIEW CONTROLLER LIFECYCLES FUNCTIONS *
      *******************************************/
@@ -43,6 +47,16 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
         tableView.insertSubview(refreshControl, at: 0)//0 means it will show on the top
         
         self.activityIndicator.startAnimating()//start the indicator before reloading data
+        
+        // Set up Infinite Scroll loading indicator
+        let frame = CGRect(x: 0, y: tableView.contentSize.height, width: tableView.bounds.size.width, height: InfiniteScrollActivityView.defaultHeight)
+        loadingMoreView = InfiniteScrollActivityView(frame: frame)
+        loadingMoreView!.isHidden = true
+        tableView.addSubview(loadingMoreView!)
+        
+        var insets = tableView.contentInset
+        insets.bottom += InfiniteScrollActivityView.defaultHeight
+        tableView.contentInset = insets
         
         self.fetchPhotos()//get now playing movies from the APIs
 
@@ -165,6 +179,30 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
         //self.textLabel?.font = self.textLabel?.font.fontWithSize(fontSize)
     }
     
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        // Handle scroll behavior here
+        if (!isMoreDataLoading) {
+            // Calculate the position of one screen length before the bottom of the results
+            let scrollViewContentHeight = tableView.contentSize.height
+            let scrollOffsetThreshold = scrollViewContentHeight - tableView.bounds.size.height
+            print("scrollViewContentHeight: \(scrollViewContentHeight) vs scrollOffsetThreshold \(scrollOffsetThreshold ) vs tableView.bounds.size.height: \(tableView.bounds.size.height)")
+            
+            // When the user has scrolled past the threshold, start requesting
+            if(scrollView.contentOffset.y > scrollOffsetThreshold && tableView.isDragging) {
+                
+                isMoreDataLoading = true
+                
+                // Update position of loadingMoreView, and start loading indicator
+                let frame = CGRect(x: 0, y: tableView.contentSize.height, width: tableView.bounds.size.width, height: InfiniteScrollActivityView.defaultHeight)
+                loadingMoreView?.frame = frame
+                loadingMoreView!.startAnimating()
+                
+                // Code to load more results
+                fetchPhotos()
+            }
+        }
+    }
+    
     /*******************
      * @OBJC FUNCTIONS *
      *******************/
@@ -205,12 +243,21 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
                 self.posts = responseDictionary["posts"] as! [[String: Any]]
                 // TODO: Reload the table view
                 
-                //reload table once we get all our info in the JSON
-                self.tableView.reloadData()
                 self.activityIndicator.stopAnimating()//stop indicator coz data is acquired
                 self.refreshControl.endRefreshing()//stop refresh when data has been acquired
  
                 self.checked = [Bool](repeating: false, count: self.posts.count+1)
+                
+                // Update flag in scrollViewDidScroll that data has been requested
+                self.isMoreDataLoading = false
+                
+                // Stop the loading indicator
+                self.loadingMoreView!.stopAnimating()
+                
+                // ... Use the new data to update the data source ...
+                
+                // Reload the tableView now that there is new data
+                self.tableView.reloadData()
             }
         }
             task.resume()
