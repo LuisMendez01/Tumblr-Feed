@@ -24,12 +24,14 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
     var posts: [[String: Any]] = []
     var refreshControl: UIRefreshControl!//! means better not be null or else crashes
     
+    var checked: [Bool]!//for checkmark on row clicked
+    
     /*******************************************
      * UIVIEW CONTROLLER LIFECYCLES FUNCTIONS *
      *******************************************/
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        
         tableView.delegate = self
         tableView.dataSource = self
         
@@ -54,8 +56,12 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
     /***********************
      * TableView functions *
      ***********************/
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         return posts.count
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -68,7 +74,7 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
         backgroundView.backgroundColor = #colorLiteral(red: 0.4699950814, green: 0.6678406, blue: 0.8381099105, alpha: 1)
         cell.selectedBackgroundView = backgroundView
         
-        let post = posts[indexPath.row]
+        let post = posts[indexPath.section]
         
         //1. It's possible that we may get a nil value for an element in the photos array, i.e. maybe no photos exist for a given post. We can check to make sure it is not nil before unwrapping. We can check using a shorthand swift syntax called if let
         
@@ -99,9 +105,64 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
                 runImageTransitionIfCached: false,
                 completion: (nil)
             )
+            
+            //check for row clicked on
+            if checked[indexPath.section] {
+                cell.accessoryType = .checkmark
+            } else {
+                cell.accessoryType = .none
+            }
         }
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        
+        let headerView = UIView(frame: CGRect(x: 0, y: 0, width: 320, height: 50))
+        headerView.backgroundColor = UIColor(white: 1, alpha: 0.9)
+        
+        let profileView = UIImageView(frame: CGRect(x: 10, y: 10, width: 30, height: 30))
+        profileView.clipsToBounds = true
+        profileView.layer.cornerRadius = 15;
+        profileView.layer.borderColor = UIColor(white: 0.7, alpha: 0.8).cgColor
+        profileView.layer.borderWidth = 1;
+        
+        // Set the avatar
+        profileView.af_setImage(withURL: URL(string: "https://api.tumblr.com/v2/blog/humansofnewyork.tumblr.com/avatar")!)
+        headerView.addSubview(profileView)
+        
+        let post = posts[section]
+        let date = post["date"] as? String
+        
+        // Add a UILabel for the date here
+        // Use the section number to get the right URL
+        // let label = ...
+        let labelDate = UILabel(frame: CGRect(x: 55, y: 10, width: 200, height: 30))
+        labelDate.textAlignment = .left
+        labelDate.text = date
+        headerView.addSubview(labelDate)
+     
+        return headerView
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 50
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        //deselect the row selected
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        checked[indexPath.section] = !checked[indexPath.section]
+        tableView.reloadRows(at: [indexPath], with: .automatic)
+
+    }
+    
+    func setSelected(selected: Bool, animated: Bool) {
+        // Use a red color when the user selects the cell
+       // let fontSize: CGFloat = selected ? 34.0 : 17.0
+        //self.textLabel?.font = self.textLabel?.font.fontWithSize(fontSize)
     }
     
     /*******************
@@ -148,6 +209,8 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
                 self.tableView.reloadData()
                 self.activityIndicator.stopAnimating()//stop indicator coz data is acquired
                 self.refreshControl.endRefreshing()//stop refresh when data has been acquired
+ 
+                self.checked = [Bool](repeating: false, count: self.posts.count+1)
             }
         }
             task.resume()
@@ -178,10 +241,14 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
+        //This is another way to get the indexPath!
+        //let cell = sender as! UITableViewCell
+        //let indexPath = tableView.indexPath(for: cell)!
+        
         if let indexPath = tableView.indexPathForSelectedRow{
             
-            let selectedRow = indexPath.row
-            let destinationVC = segue.destination as UIViewController
+            let selectedRow = indexPath.section
+            let destinationVC = segue.destination as! PhotoDetailsViewController
             
             //can have diff segues say for btn1 and for btn2, but
             //since I'm using table then even and row cells are used here
@@ -191,6 +258,22 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
             } else if segue.identifier == "showPhotoSegue" && selectedRow%2 == 1 {
                 destinationVC.title = "Blue"
                 destinationVC.view.backgroundColor = UIColor.blue
+            }
+            
+            let post = posts[selectedRow]
+            
+            if let photos = post["photos"] as? [[String: Any]] {
+                
+                // 1. Get the first photo in the photos array
+                let photo = photos[0]
+                // 2. Get the original size dictionary from the photo
+                let originalSize = photo["original_size"] as! [String: Any]
+                // 3. Get the url string from the original size dictionary
+                let urlString = originalSize["url"] as! String
+                // 4. Create a URL using the urlString
+                let url = URL(string: urlString)
+                
+                destinationVC.url = url!
             }
         }
        
