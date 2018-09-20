@@ -190,7 +190,7 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
     
     func setSelected(selected: Bool, animated: Bool) {
         // Use a red color when the user selects the cell
-       // let fontSize: CGFloat = selected ? 34.0 : 17.0
+        // let fontSize: CGFloat = selected ? 34.0 : 17.0
         //self.textLabel?.font = self.textLabel?.font.fontWithSize(fontSize)
     }
     
@@ -198,9 +198,19 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
         // Handle scroll behavior here
         if (!isMoreDataLoading) {
             // Calculate the position of one screen length before the bottom of the results
-            let scrollViewContentHeight = tableView.contentSize.height//size of content on table
-            let phoneFrame = tableView.frame.height//height for phone screen
+            let scrollViewContentHeight = tableView.contentSize.height//size of content of whole table, all data requested
+            let phoneFrame = tableView.frame.height//height of the phone
             let scrollOffsetThreshold = scrollViewContentHeight - phoneFrame//when reached end of table to start requesting more data
+            /*************************************************************************************
+             * tableView.contentSize.height -> contentSize is just an estimated value initially. *
+             * If you need to use the contentSize, you’ll want to disable estimated heights by   *
+             * setting the 3 estimated height properties to zero:                                *
+             *************************************************************************************/
+            tableView.estimatedRowHeight = 0//NOTE: there is no need to do this, estimated values work same way
+            tableView.estimatedSectionHeaderHeight = 0
+            tableView.estimatedSectionFooterHeight = 0
+            
+            //print(tableView.contentSize.height)
             
             // When the user has scrolled past the threshold, start requesting
             if(scrollView.contentOffset.y > scrollOffsetThreshold && tableView.isTracking) {
@@ -263,17 +273,17 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
                 self.posts = responseDictionary["posts"] as! [[String: Any]]
                 // TODO: Reload the table view
                 
-                self.activityIndicator.stopAnimating()//stop indicator coz data is acquired
-                self.refreshControl.endRefreshing()//stop refresh when data has been acquired
- 
-                self.checked = [Bool](repeating: false, count: self.posts.count+1)
-                
-                // Update flag in scrollViewDidScroll that data has been requested
-                self.isMoreDataLoading = false
-                
                 // ... Use the new data to update the data source ...
                 //applied lateness to see the transition of indicator and reload data
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) { // change 2 to desired number of seconds
+                    
+                    self.activityIndicator.stopAnimating()//stop indicator coz data is acquired
+                    self.refreshControl.endRefreshing()//stop refresh when data has been acquired
+                    
+                    self.checked = [Bool](repeating: false, count: self.posts.count+1)
+                    
+                    // Update flag in scrollViewDidScroll that data has been requested
+                    self.isMoreDataLoading = false
                 
                     // Stop the loading indicator
                     self.loadingMoreView!.stopAnimating()
