@@ -30,6 +30,8 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
     
     var loadingMoreView:InfiniteScrollActivityView?
     
+    var limit: Int = 10
+    
     /*******************************************
      * UIVIEW CONTROLLER LIFECYCLES FUNCTIONS *
      *******************************************/
@@ -71,6 +73,7 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
      * TableView functions *
      ***********************/
     func numberOfSections(in tableView: UITableView) -> Int {
+        print(posts.count)
         return posts.count
     }
     
@@ -116,7 +119,7 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
                 withURL: url!,
                 placeholderImage: placeholderImage,
                 imageTransition: .crossDissolve(2),
-                runImageTransitionIfCached: true,
+                runImageTransitionIfCached: false,
                 completion: (nil)
             )
             
@@ -189,7 +192,7 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func setSelected(selected: Bool, animated: Bool) {
-        // Use a red color when the user selects the cell
+         // Use a red color when the user selects the cell
         // let fontSize: CGFloat = selected ? 34.0 : 17.0
         //self.textLabel?.font = self.textLabel?.font.fontWithSize(fontSize)
     }
@@ -206,9 +209,9 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
              * If you need to use the contentSize, you’ll want to disable estimated heights by   *
              * setting the 3 estimated height properties to zero:                                *
              *************************************************************************************/
-            tableView.estimatedRowHeight = 0//NOTE: there is no need to do this, estimated values work same way
-            tableView.estimatedSectionHeaderHeight = 0
-            tableView.estimatedSectionFooterHeight = 0
+            //tableView.estimatedRowHeight = 0//NOTE: there is no need to do this, estimated values work same way
+            //tableView.estimatedSectionHeaderHeight = 0
+            //tableView.estimatedSectionFooterHeight = 0
             
             //print(tableView.contentSize.height)
             
@@ -250,7 +253,7 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
     func fetchPhotos() {
         
         // Network request snippet
-        let url = URL(string: "https://api.tumblr.com/v2/blog/humansofnewyork.tumblr.com/posts/photo?api_key=Q6vHoaVm5L1u2ZAW1fqv3Jw48gFzYVg9P0vH0VHl3GVy6quoGV")!
+        let url = URL(string: "https://api.tumblr.com/v2/blog/humansofnewyork.tumblr.com/posts/photo?api_key=Q6vHoaVm5L1u2ZAW1fqv3Jw48gFzYVg9P0vH0VHl3GVy6quoGV&limit=\(limit)")!
         let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
         session.configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
         let task = session.dataTask(with: url) { (data, response, error) in
@@ -265,6 +268,8 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
             } else if let data = data,
                 let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
                 print(dataDictionary)
+                
+                self.limit = self.limit+10
                 
                 // TODO: Get the posts and store in posts property
                 // Get the dictionary from the response key
