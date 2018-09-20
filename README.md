@@ -95,13 +95,14 @@ Please list two areas of the assignment you'd like to **discuss further with you
 Here's a walkthrough of implemented user stories:
 
 <div style="display: inline-block;">
-<img float="left" width="250" height="500" src='https://user-images.githubusercontent.com/16315708/45463509-69dcbd80-b6da-11e8-9149-33cc81ea1b14.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img float="left" width="250" height="500" src='https://user-images.githubusercontent.com/16315708/45794655-8e4e1200-bc65-11e8-85c8-0ddac72c1ecd.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 <div/>
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
 
 Describe any challenges encountered while building the app.
+
     - I couldn't zoom in or out on the pictures not because the code was wrong but I just didn't know I had to hold alt + click and then drag. I was having a hard time there.
     - I was confused on the infinite scrolling I could not see the activity indicator being applied. I also saw some bouncing when I reached the end of the table, not sure why it did that. 
 
