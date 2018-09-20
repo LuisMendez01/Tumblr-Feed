@@ -324,7 +324,7 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
             //can have diff segues say for btn1 and for btn2, but
             //since I'm using table then even and row cells are used here
             if segue.identifier == "otherSegue" || selectedRow%2 == 0 {
-                destinationVC.title = "Red"
+                destinationVC.title = "Green"
                 destinationVC.view.backgroundColor = #colorLiteral(red: 0.1960784346, green: 0.3411764801, blue: 0.1019607857, alpha: 1)
             } else if segue.identifier == "showPhotoSegue" && selectedRow%2 == 1 {
                 destinationVC.title = "Blue"
