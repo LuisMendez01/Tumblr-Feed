@@ -50,14 +50,13 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
         
         self.activityIndicator.startAnimating()//start the indicator before reloading data
         
-        // Set up Infinite Scroll loading indicator
-        let frame = CGRect(x: 0, y: tableView.contentSize.height, width: tableView.bounds.size.width, height: InfiniteScrollActivityView.defaultHeight)
-        loadingMoreView = InfiniteScrollActivityView(frame: frame)
+        loadingMoreView = InfiniteScrollActivityView()//instantiate the object
         loadingMoreView!.isHidden = true
         tableView.addSubview(loadingMoreView!)
         
         var insets = tableView.contentInset
-        insets.bottom += InfiniteScrollActivityView.defaultHeight
+        insets.bottom += 45//InfiniteScrollActivityView.defaultHeight -> 60
+        print("HL \(InfiniteScrollActivityView.defaultHeight)")
         tableView.contentInset = insets
         
         self.fetchPhotos()//get now playing movies from the APIs
@@ -216,7 +215,11 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
             //print(tableView.contentSize.height)
             
             // When the user has scrolled past the threshold, start requesting
-            if(scrollView.contentOffset.y > scrollOffsetThreshold && tableView.isTracking) {
+            if(scrollView.contentOffset.y > (scrollOffsetThreshold + 60) && tableView.isTracking) {
+                
+                var insets = tableView.contentInset
+                insets.bottom += 45//InfiniteScrollActivityView.defaultHeight -> 60
+                tableView.contentInset = insets
                 
                 print("beginBatchFetch")
                 
@@ -225,13 +228,15 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
                 // Update position of loadingMoreView, and start loading indicator
                 //width same as table width, height same as default indicator
                 //position x start from the very most left and y start right after the table end
-                let frame = CGRect(x: 0, y: tableView.contentSize.height, width: tableView.bounds.size.width, height: InfiniteScrollActivityView.defaultHeight)
+                let frame = CGRect(x: 0, y: tableView.contentSize.height-8, width: tableView.bounds.size.width, height: InfiniteScrollActivityView.defaultHeight)
                 
                 loadingMoreView?.frame = frame//this is how big indicator will be and positioned
                 loadingMoreView!.startAnimating()
                 
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                 // Code to load more results
-                fetchPhotos()
+                self.fetchPhotos()
+                }
             }
         }
     }
@@ -289,6 +294,10 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
                     
                     // Update flag in scrollViewDidScroll that data has been requested
                     self.isMoreDataLoading = false
+                    
+                    var insets = self.tableView.contentInset
+                    insets.bottom -= 45//InfiniteScrollActivityView.defaultHeight -> 60
+                    self.tableView.contentInset = insets
                 
                     // Stop the loading indicator
                     self.loadingMoreView!.stopAnimating()
